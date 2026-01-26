@@ -1,0 +1,22 @@
+# Environment
+.env
+venv/
+__pycache__/
+*.pyc
+
+# Terraform
+deploy/terraform/.terraform/
+deploy/terraform/.terraform.lock.hcl
+deploy/terraform/terraform.tfstate
+deploy/terraform/terraform.tfstate.backup
+deploy/terraform/terraform.tfvars
+deploy/terraform/tfplan
+
+# Generated files
+database/wallet/
+database/liquibase/liquibase.cloud.properties
+
+# IDE
+.idea/
+.vscode/
+*.swp
