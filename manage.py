@@ -347,7 +347,8 @@ def cloud_setup():
     print("\nNext steps:")
     print("  cd deploy/terraform")
     print("  terraform init")
-    print("  terraform apply")
+    print("  terraform plan -out=tfplan")
+    print("  terraform apply tfplan")
     print("  cd ../..")
     print("  ./manage.py cloud deploy")
 

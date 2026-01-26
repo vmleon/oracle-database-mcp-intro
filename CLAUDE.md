@@ -23,7 +23,7 @@ pip install -r requirements.txt
 
 # Cloud database (optional)
 ./manage.py cloud setup    # Interactive OCI config -> terraform.tfvars
-cd deploy/terraform && terraform init && terraform apply && cd ../..
+cd deploy/terraform && terraform init && terraform plan -out=tfplan && terraform apply tfplan && cd ../..
 ./manage.py cloud deploy   # Extract wallet + run Liquibase
 
 # MCP connections
@@ -79,3 +79,8 @@ deploy/terraform/         # ADB-S infrastructure
 
 - Do not include Co-Authored-By lines or any Claude references in commit messages
 - Keep commit messages concise and focused on the change
+
+## Documentation Style
+
+- Use separate code blocks for commands that should be run independently
+- This allows users to copy and run each command separately
