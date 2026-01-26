@@ -7,6 +7,42 @@ Demo project for Oracle Database MCP servers with dual database setup:
 
 Both databases have identical HR schema deployed via Liquibase, accessible through SQLcl MCP server from Claude Code.
 
+## Architecture
+
+```mermaid
+flowchart TB
+    subgraph dev["Developer Machine"]
+        CC["Claude Code<br/>(AI Assistant)"]
+        MCP["SQLcl MCP Server<br/>(Protocol Bridge)"]
+        CC <-->|"MCP Protocol"| MCP
+    end
+
+    subgraph local["Local Environment"]
+        Podman["Podman Container"]
+        ODB["Oracle Database FREE<br/>(FREEPDB1)"]
+        Podman --> ODB
+    end
+
+    subgraph cloud["Oracle Cloud Infrastructure"]
+        ADB["Autonomous Database 26ai<br/>(ADB-S)"]
+        Wallet["Wallet<br/>(mTLS)"]
+        Wallet --> ADB
+    end
+
+    MCP -->|"hr_local<br/>localhost:1521"| ODB
+    MCP -->|"hr_cloud<br/>via wallet"| Wallet
+
+    subgraph schema["HR Schema (identical)"]
+        direction LR
+        Jobs["jobs"]
+        Depts["departments"]
+        Emps["employees"]
+    end
+
+    ODB -.-> schema
+    ADB -.-> schema
+```
+
 ## Prerequisites
 
 - Python 3.10+
