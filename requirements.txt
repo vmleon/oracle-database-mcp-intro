@@ -1,0 +1,4 @@
+questionary
+Jinja2
+oci
+python-dotenv

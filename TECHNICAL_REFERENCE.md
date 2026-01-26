@@ -74,7 +74,7 @@ sequenceDiagram
     DB->>DB: Execute SQL
     DB-->>App: Return results
 
-    Note over DB,LLM: Database controls LLM choice and prompt augmentation
+    Note over DB,LLM: DB: LLM and prompt augmentation
 ```
 
 **Key characteristics**:

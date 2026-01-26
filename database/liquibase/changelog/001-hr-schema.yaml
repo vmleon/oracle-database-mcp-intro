@@ -1,0 +1,270 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-jobs
+      author: demo
+      changes:
+        - createTable:
+            tableName: jobs
+            columns:
+              - column:
+                  name: job_id
+                  type: VARCHAR2(10)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: job_title
+                  type: VARCHAR2(35)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: min_salary
+                  type: NUMBER(8)
+              - column:
+                  name: max_salary
+                  type: NUMBER(8)
+
+  - changeSet:
+      id: 002-create-departments
+      author: demo
+      changes:
+        - createTable:
+            tableName: departments
+            columns:
+              - column:
+                  name: department_id
+                  type: NUMBER(4)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: department_name
+                  type: VARCHAR2(30)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: manager_id
+                  type: NUMBER(6)
+              - column:
+                  name: location_id
+                  type: NUMBER(4)
+
+  - changeSet:
+      id: 003-create-employees
+      author: demo
+      changes:
+        - createTable:
+            tableName: employees
+            columns:
+              - column:
+                  name: employee_id
+                  type: NUMBER(6)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: VARCHAR2(20)
+              - column:
+                  name: last_name
+                  type: VARCHAR2(25)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR2(25)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: phone_number
+                  type: VARCHAR2(20)
+              - column:
+                  name: hire_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: job_id
+                  type: VARCHAR2(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: salary
+                  type: NUMBER(8,2)
+              - column:
+                  name: commission_pct
+                  type: NUMBER(2,2)
+              - column:
+                  name: manager_id
+                  type: NUMBER(6)
+              - column:
+                  name: department_id
+                  type: NUMBER(4)
+        - addForeignKeyConstraint:
+            baseTableName: employees
+            baseColumnNames: job_id
+            referencedTableName: jobs
+            referencedColumnNames: job_id
+            constraintName: emp_job_fk
+        - addForeignKeyConstraint:
+            baseTableName: employees
+            baseColumnNames: department_id
+            referencedTableName: departments
+            referencedColumnNames: department_id
+            constraintName: emp_dept_fk
+
+  - changeSet:
+      id: 004-insert-jobs
+      author: demo
+      changes:
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "AD_PRES"}
+              - column: {name: job_title, value: "President"}
+              - column: {name: min_salary, value: 20000}
+              - column: {name: max_salary, value: 40000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "AD_VP"}
+              - column: {name: job_title, value: "Vice President"}
+              - column: {name: min_salary, value: 15000}
+              - column: {name: max_salary, value: 30000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "IT_PROG"}
+              - column: {name: job_title, value: "Programmer"}
+              - column: {name: min_salary, value: 4000}
+              - column: {name: max_salary, value: 10000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "SA_MAN"}
+              - column: {name: job_title, value: "Sales Manager"}
+              - column: {name: min_salary, value: 10000}
+              - column: {name: max_salary, value: 20000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "SA_REP"}
+              - column: {name: job_title, value: "Sales Representative"}
+              - column: {name: min_salary, value: 6000}
+              - column: {name: max_salary, value: 12000}
+
+  - changeSet:
+      id: 005-insert-departments
+      author: demo
+      changes:
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 10}
+              - column: {name: department_name, value: "Executive"}
+              - column: {name: manager_id, value: 100}
+              - column: {name: location_id, value: 1700}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 20}
+              - column: {name: department_name, value: "IT"}
+              - column: {name: manager_id, value: 103}
+              - column: {name: location_id, value: 1400}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 30}
+              - column: {name: department_name, value: "Sales"}
+              - column: {name: manager_id, value: 104}
+              - column: {name: location_id, value: 2500}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 40}
+              - column: {name: department_name, value: "Marketing"}
+              - column: {name: manager_id, value: null}
+              - column: {name: location_id, value: 2400}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 50}
+              - column: {name: department_name, value: "Finance"}
+              - column: {name: manager_id, value: null}
+              - column: {name: location_id, value: 1700}
+
+  - changeSet:
+      id: 006-insert-employees
+      author: demo
+      changes:
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 100}
+              - column: {name: first_name, value: "Steven"}
+              - column: {name: last_name, value: "King"}
+              - column: {name: email, value: "SKING"}
+              - column: {name: phone_number, value: "515.123.4567"}
+              - column: {name: hire_date, valueDate: "2003-06-17"}
+              - column: {name: job_id, value: "AD_PRES"}
+              - column: {name: salary, value: 24000}
+              - column: {name: commission_pct, value: null}
+              - column: {name: manager_id, value: null}
+              - column: {name: department_id, value: 10}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 101}
+              - column: {name: first_name, value: "Neena"}
+              - column: {name: last_name, value: "Kochhar"}
+              - column: {name: email, value: "NKOCHHAR"}
+              - column: {name: phone_number, value: "515.123.4568"}
+              - column: {name: hire_date, valueDate: "2005-09-21"}
+              - column: {name: job_id, value: "AD_VP"}
+              - column: {name: salary, value: 17000}
+              - column: {name: commission_pct, value: null}
+              - column: {name: manager_id, value: 100}
+              - column: {name: department_id, value: 10}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 103}
+              - column: {name: first_name, value: "Alexander"}
+              - column: {name: last_name, value: "Hunold"}
+              - column: {name: email, value: "AHUNOLD"}
+              - column: {name: phone_number, value: "590.423.4567"}
+              - column: {name: hire_date, valueDate: "2006-01-03"}
+              - column: {name: job_id, value: "IT_PROG"}
+              - column: {name: salary, value: 9000}
+              - column: {name: commission_pct, value: null}
+              - column: {name: manager_id, value: 101}
+              - column: {name: department_id, value: 20}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 104}
+              - column: {name: first_name, value: "John"}
+              - column: {name: last_name, value: "Russell"}
+              - column: {name: email, value: "JRUSSEL"}
+              - column: {name: phone_number, value: "011.44.1344.429268"}
+              - column: {name: hire_date, valueDate: "2004-10-01"}
+              - column: {name: job_id, value: "SA_MAN"}
+              - column: {name: salary, value: 14000}
+              - column: {name: commission_pct, valueNumeric: 0.40}
+              - column: {name: manager_id, value: 100}
+              - column: {name: department_id, value: 30}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 105}
+              - column: {name: first_name, value: "Diana"}
+              - column: {name: last_name, value: "Lorentz"}
+              - column: {name: email, value: "DLORENTZ"}
+              - column: {name: phone_number, value: "590.423.5567"}
+              - column: {name: hire_date, valueDate: "2007-02-07"}
+              - column: {name: job_id, value: "SA_REP"}
+              - column: {name: salary, value: 8500}
+              - column: {name: commission_pct, valueNumeric: 0.25}
+              - column: {name: manager_id, value: 104}
+              - column: {name: department_id, value: 30}
