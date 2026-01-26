@@ -19,6 +19,268 @@ Oracle evaluated Anthropic's Model Context Protocol shortly after its November 2
 
 ---
 
+## Understanding MCP vs Select AI vs Select AI Agent
+
+Oracle offers **three complementary AI-database integration technologies** that serve different architectural patterns. Understanding when to use each is critical for making the right design decisions.
+
+### The Three Technologies at a Glance
+
+| Technology          | Package             | Direction       | Primary Use Case            | LLM Location          |
+| ------------------- | ------------------- | --------------- | --------------------------- | --------------------- |
+| **Select AI**       | DBMS_CLOUD_AI       | DB → LLM        | NL2SQL, RAG from SQL        | External (you choose) |
+| **Select AI Agent** | DBMS_CLOUD_AI_AGENT | DB orchestrates | Agentic workflows inside DB | External (you choose) |
+| **MCP Server**      | Built-in endpoint   | LLM → DB        | External agents access DB   | External agent's LLM  |
+
+### Select AI: Natural Language to SQL (Inside-Out)
+
+**Introduced**: 2023 with Autonomous Database
+
+Select AI enables **SQL access to generative AI** — you execute natural language queries directly from SQL, and the database calls an external LLM to generate and optionally execute SQL.
+
+```sql
+-- Set your AI profile (configures which LLM to use)
+EXEC DBMS_CLOUD_AI.SET_PROFILE('OPENAI');
+
+-- Natural language query - generates and runs SQL
+SELECT AI 'What are my top 10 customers by revenue?';
+
+-- Show the generated SQL without executing
+SELECT AI showsql 'customers in California';
+
+-- Get a natural language explanation of results
+SELECT AI narrate 'Why did revenue drop last month?';
+
+-- General chat with the LLM
+SELECT AI chat 'What is Oracle Autonomous Database?';
+```
+
+**How it works**:
+
+1. You create an AI Profile specifying: LLM provider, credentials, schema objects to expose
+2. The database augments your prompt with schema metadata (table names, columns, types, comments)
+3. The LLM generates SQL tailored to your schema
+4. The database executes the SQL and returns results
+
+```mermaid
+sequenceDiagram
+    participant App as Application/SQL Client
+    participant DB as Oracle Database
+    participant LLM as External LLM<br/>(OpenAI, Cohere, OCI GenAI)
+
+    App->>DB: SELECT AI 'top customers by revenue'
+    DB->>DB: Augment prompt with schema metadata
+    DB->>LLM: Send augmented prompt
+    LLM-->>DB: Return generated SQL
+    DB->>DB: Execute SQL
+    DB-->>App: Return results
+
+    Note over DB,LLM: Database controls LLM choice and prompt augmentation
+```
+
+**Key characteristics**:
+
+- **SQL is the interface** — works from any SQL client, APEX, OML notebooks
+- **Database controls the LLM** — you configure which provider/model via AI profiles
+- **Schema-aware** — database provides metadata to reduce hallucinations
+- **Supports RAG** — can query vector stores with `SELECT AI narrate`
+- **Actions**: `runsql` (default), `showsql`, `narrate`, `chat`, `explainsql`
+
+### Select AI Agent: Agentic Workflows Inside the Database
+
+**Introduced**: October 2025 with Oracle AI Database 26ai
+
+Select AI Agent is a **framework for building autonomous agents inside the database** using the ReAct (Reasoning and Acting) pattern. Unlike Select AI which is for single queries, Select AI Agent supports multi-turn conversations, tool use, reflection, and memory.
+
+```sql
+-- Create an agent
+BEGIN
+  DBMS_CLOUD_AI_AGENT.CREATE_AGENT(
+    agent_name  => 'SALES_ADVISOR',
+    attributes  => '{"profile_name": "OCI_GENAI",
+                     "role": "You are a sales analyst expert"}',
+    description => 'Analyzes sales data and provides recommendations'
+  );
+END;
+/
+
+-- Create a custom tool the agent can use
+BEGIN
+  DBMS_CLOUD_AI_AGENT.CREATE_TOOL(
+    tool_name  => 'GET_SALES_DATA',
+    attributes => '{
+      "instruction": "Returns sales data for analysis",
+      "function": "GET_SALES_DATA",
+      "tool_inputs": [{"name": "region", "description": "Sales region"}]
+    }'
+  );
+END;
+/
+
+-- Create a task that uses the tool
+BEGIN
+  DBMS_CLOUD_AI_AGENT.CREATE_TASK(
+    task_name  => 'ANALYZE_SALES',
+    attributes => '{
+      "instruction": "Analyze sales trends and provide recommendations",
+      "tools": ["GET_SALES_DATA", "SQL"]
+    }'
+  );
+END;
+/
+
+-- Run the agent
+SELECT DBMS_CLOUD_AI_AGENT.RUN_AGENT(
+  agent_name => 'SALES_ADVISOR',
+  prompt     => 'What are the sales trends in EMEA?'
+) FROM DUAL;
+```
+
+**Key characteristics**:
+
+- **ReAct pattern** — agent reasons, acts, observes, reflects in a loop
+- **Multi-turn memory** — short-term (conversation) and long-term (preferences)
+- **Tool ecosystem** — built-in (RAG, SQL) + custom PL/SQL functions + REST endpoints
+- **Human-in-the-loop** — agents can pause for approval
+- **Teams** — multiple agents can collaborate on complex tasks
+
+### MCP Server: External Agents Access the Database (Outside-In)
+
+**Introduced**: SQLcl MCP July 2025, Autonomous MCP December 2025
+
+MCP Server exposes database capabilities to **external AI agents** (Claude, Copilot, Cursor, etc.) via the Model Context Protocol. The LLM runs externally and calls into the database.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Agent as External Agent<br/>(Claude, Copilot)
+    participant MCP as MCP Server<br/>(SQLcl or Autonomous)
+    participant DB as Oracle Database
+
+    User->>Agent: "Show me top customers"
+    Agent->>Agent: Reason about request
+    Agent->>MCP: list-connections
+    MCP-->>Agent: [dev_db, prod_db]
+    Agent->>MCP: connect("dev_db")
+    MCP->>DB: Establish session
+    DB-->>MCP: Connected
+    Agent->>Agent: Generate SQL
+    Agent->>MCP: run-sql("SELECT...")
+    MCP->>DB: Execute query
+    DB-->>MCP: Results
+    MCP-->>Agent: Data
+    Agent->>User: "Here are your top customers..."
+
+    Note over Agent,MCP: External agent controls reasoning and SQL generation
+```
+
+**Key characteristics**:
+
+- **External LLM controls** — the agent's LLM (Claude, GPT, etc.) does the reasoning
+- **MCP protocol** — standardized JSON-RPC interface (Anthropic specification)
+- **Tools exposed** — SQLcl has 5 fixed tools; Autonomous exposes Select AI Agent tools
+- **Broader agent capabilities** — agent can use multiple MCP servers, web search, etc.
+
+### The Critical Relationship: MCP Exposes Select AI Agent Tools
+
+Here's the key insight: **Autonomous MCP Server uses Select AI Agent as its tool framework**.
+
+```mermaid
+flowchart TB
+    subgraph External["External World"]
+        Claude["Claude Desktop"]
+        Cursor["Cursor IDE"]
+        OCI["OCI AI Agent"]
+    end
+
+    subgraph ADB["Autonomous AI Database"]
+        MCP["MCP Server<br/>(HTTP endpoint)"]
+        Agent["Select AI Agent Framework"]
+        Tools["Registered Tools"]
+        SelectAI["Select AI<br/>(NL2SQL)"]
+        Data[("Database")]
+    end
+
+    Claude -->|MCP Protocol| MCP
+    Cursor -->|MCP Protocol| MCP
+    OCI -->|MCP Protocol| MCP
+
+    MCP --> Agent
+    Agent --> Tools
+    Tools --> SelectAI
+    Tools --> Data
+    SelectAI --> Data
+
+    style MCP fill:#e3f2fd
+    style Agent fill:#fff3e0
+    style SelectAI fill:#e8f5e9
+```
+
+When you register a tool with `DBMS_CLOUD_AI_AGENT.CREATE_TOOL`, it becomes available:
+
+1. **Internally** — to Select AI Agent workflows running inside the database
+2. **Externally** — to MCP clients connecting via the Autonomous MCP Server
+
+### When to Use Each
+
+```mermaid
+flowchart TD
+    Start([AI + Oracle Database?]) --> Q1{Where does the<br/>LLM run?}
+
+    Q1 -->|"Inside my app<br/>(I control it)"| Q2{Single query or<br/>multi-step workflow?}
+    Q1 -->|"External agent<br/>(Claude, Copilot)"| MCP["✅ MCP Server"]
+
+    Q2 -->|Single NL query| SelectAI["✅ Select AI<br/>(DBMS_CLOUD_AI)"]
+    Q2 -->|Multi-step agentic| Q3{Need to expose<br/>to external agents too?}
+
+    Q3 -->|Yes| Both["✅ Select AI Agent<br/>+ MCP Server"]
+    Q3 -->|No| Agent["✅ Select AI Agent<br/>(DBMS_CLOUD_AI_AGENT)"]
+
+    style SelectAI fill:#e8f5e9
+    style Agent fill:#fff3e0
+    style MCP fill:#e3f2fd
+    style Both fill:#fce4ec
+```
+
+| Scenario                                      | Recommended Technology    |
+| --------------------------------------------- | ------------------------- |
+| Business user runs ad-hoc queries via APEX    | **Select AI**             |
+| Embed NL2SQL in your application              | **Select AI**             |
+| Build autonomous agents with PL/SQL tools     | **Select AI Agent**       |
+| Let Claude Desktop query your database        | **MCP Server**            |
+| VS Code Copilot helps with database tasks     | **MCP Server (SQLcl)**    |
+| Build agents that external clients can invoke | **Select AI Agent + MCP** |
+| Python application needs database AI          | **Select AI for Python**  |
+
+### Comparison Summary
+
+| Aspect           | Select AI           | Select AI Agent      | MCP Server                  |
+| ---------------- | ------------------- | -------------------- | --------------------------- |
+| **Package**      | DBMS_CLOUD_AI       | DBMS_CLOUD_AI_AGENT  | Built-in                    |
+| **Interface**    | SQL (`SELECT AI`)   | PL/SQL               | JSON-RPC (MCP)              |
+| **LLM choice**   | You configure       | You configure        | Agent's LLM                 |
+| **Direction**    | DB calls out        | DB orchestrates      | External calls in           |
+| **Complexity**   | Single queries      | Multi-turn workflows | Tool invocation             |
+| **Memory**       | Conversation option | Short + long term    | Agent manages               |
+| **Custom tools** | No                  | Yes                  | Via Select AI Agent         |
+| **Use case**     | NL2SQL, RAG         | Autonomous agents    | External agent access       |
+| **Availability** | ADB (2023+)         | ADB 26ai (Oct 2025)  | SQLcl 25.2+, ADB (Dec 2025) |
+
+### They're Complementary, Not Competing
+
+The three technologies form a **layered architecture**:
+
+1. **Select AI** provides the NL2SQL foundation
+2. **Select AI Agent** builds on Select AI to enable agentic workflows
+3. **MCP Server** exposes Select AI Agent tools to the external world
+
+An enterprise might use all three:
+
+- **Select AI** in APEX dashboards for business user queries
+- **Select AI Agent** for automated report generation workflows
+- **MCP Server** to let developers use Claude/Copilot with the database
+
+---
+
 ## Part 1: SQLcl MCP Server (Local)
 
 ### Architecture Overview
