@@ -103,17 +103,39 @@ cd ../..
 
 ## Demo
 
-Once setup is complete, you can use Claude Code to query the databases:
+Once setup is complete, open Claude Code from the project directory:
+
+```bash
+claude
+```
+
+Verify the MCP server is configured:
+
+```
+/mcp
+```
+
+You should see `sqlcl` listed as an active MCP server.
 
 **Data Queries:**
 
-- "Connect to hr_local and list all employees"
-- "Connect to hr_cloud and show employees by department with their managers"
+```
+Connect to hr_local and list all employees
+```
+
+```
+Connect to hr_cloud and show employees by department with their managers
+```
 
 **Database Administration:**
 
-- "What is the character-set of the hr_local database?"
-- "Show the database version and instance name of hr_local"
+```
+What is the character-set of the hr_local database?
+```
+
+```
+Show the database version and instance name of hr_local
+```
 
 ## Management Commands
 
