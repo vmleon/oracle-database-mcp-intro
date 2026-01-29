@@ -14,7 +14,7 @@ _Presentation Draft for PowerPoint_
 
 **Empowering Enterprise AI with Secure Database Access**
 
-_Victor Martin Alvarez | [JAn 29th, 2026]_
+_Victor Martin Alvarez | [Jan 29th, 2026]_
 
 ---
 
@@ -112,46 +112,11 @@ flowchart TB
 
 **SQL access to generative AI** — execute natural language queries directly from SQL
 
-### The Magic
-
 ```sql
 SELECT AI 'What are my top 10 customers by revenue?';
 ```
 
-The database:
-
-1. Augments your prompt with schema metadata
-2. Calls your chosen LLM (OpenAI, Cohere, OCI GenAI)
-3. Generates and executes optimized SQL
-4. Returns results
-
----
-
-## Slide 6: Select AI Architecture
-
-```mermaid
-sequenceDiagram
-    participant App as Business App / APEX
-    participant DB as Oracle Database
-    participant LLM as External LLM<br/>(OpenAI, Cohere, OCI)
-
-    App->>DB: SELECT AI 'top customers by revenue'
-    DB->>DB: Augment prompt with schema metadata
-    DB->>LLM: Send augmented prompt
-    LLM-->>DB: Return generated SQL
-    DB->>DB: Execute SQL
-    DB-->>App: Return results
-
-    Note over DB,LLM: Database controls the LLM interaction
-```
-
-### Key Point
-
-**The database calls OUT to the LLM** — you control which model, which data is exposed
-
----
-
-## Slide 7: Select AI Capabilities
+The database augments your prompt with schema metadata, calls your chosen LLM (OpenAI, Cohere, OCI GenAI), generates and executes optimized SQL, and returns results.
 
 | Action       | What It Does                 | Example                               |
 | ------------ | ---------------------------- | ------------------------------------- |
@@ -172,7 +137,7 @@ sequenceDiagram
 
 ---
 
-## Slide 8: Select AI Agent - Autonomous Workflows
+## Slide 6: Select AI Agent - Autonomous Workflows
 
 ### What Is It?
 
@@ -191,7 +156,7 @@ sequenceDiagram
 
 ---
 
-## Slide 9: Select AI Agent Architecture
+## Slide 7: Select AI Agent Architecture
 
 ```mermaid
 flowchart TB
@@ -229,7 +194,7 @@ flowchart TB
 
 ---
 
-## Slide 10: Select AI Agent Example
+## Slide 8: Select AI Agent Example
 
 ```sql
 -- Create a sales advisor agent
@@ -263,7 +228,7 @@ SELECT DBMS_CLOUD_AI_AGENT.RUN_AGENT(
 
 ---
 
-## Slide 11: SQLcl MCP Server - Developer AI Assistants
+## Slide 9: SQLcl MCP Server - Developer AI Assistants
 
 ### What Is It?
 
@@ -282,7 +247,7 @@ SELECT DBMS_CLOUD_AI_AGENT.RUN_AGENT(
 
 ---
 
-## Slide 12: SQLcl MCP Architecture
+## Slide 10: SQLcl MCP Architecture
 
 ```mermaid
 flowchart LR
@@ -312,7 +277,7 @@ flowchart LR
 
 ---
 
-## Slide 13: SQLcl MCP Tools
+## Slide 11: SQLcl MCP Tools
 
 | Tool               | Purpose                                   |
 | ------------------ | ----------------------------------------- |
@@ -336,7 +301,7 @@ Claude: [calls list-connections]
 
 ---
 
-## Slide 14: SQLcl MCP Security
+## Slide 12: SQLcl MCP Security
 
 ```mermaid
 flowchart LR
@@ -379,7 +344,7 @@ flowchart LR
 
 ---
 
-## Slide 15: Autonomous MCP Server - Enterprise Scale
+## Slide 13: Autonomous MCP Server - Enterprise Scale
 
 ### What Is It?
 
@@ -400,7 +365,7 @@ flowchart LR
 
 ---
 
-## Slide 16: Autonomous MCP Architecture
+## Slide 14: Autonomous MCP Architecture & Security
 
 ```mermaid
 flowchart LR
@@ -426,43 +391,15 @@ flowchart LR
     style ADB fill:#fff3e0
 ```
 
-### Key Point
-
 **MCP exposes Select AI Agent tools** — create once, use from any AI assistant
 
----
-
-## Slide 17: Autonomous MCP Security Layers
-
-```mermaid
-flowchart TB
-    subgraph L1["Layer 1: Network Security"]
-        ACL["Network ACLs"]
-        PE["Private Endpoints"]
-        OAuth["OAuth Authentication"]
-    end
-
-    subgraph L2["Layer 2: Database Security"]
-        VPD["Virtual Private Database"]
-        Redaction["Data Redaction"]
-        Firewall["SQL Firewall"]
-        Vault["Database Vault"]
-    end
-
-    subgraph L3["Layer 3: Audit & Compliance"]
-        Unified["Unified Audit"]
-        Rate["Rate Limiting"]
-        Session["Session Controls"]
-    end
-
-    L1 --> L2 --> L3
-
-    style L1 fill:#ffebee
-    style L2 fill:#fff3e0
-    style L3 fill:#e8f5e9
-```
-
 ### Enterprise Security Stack
+
+| Layer                | Features                                            |
+| -------------------- | --------------------------------------------------- |
+| **Network Security** | Network ACLs, Private Endpoints, OAuth              |
+| **Database Security**| VPD, Data Redaction, SQL Firewall, Database Vault   |
+| **Audit & Compliance**| Unified Audit, Rate Limiting, Session Controls     |
 
 All existing Oracle security features work seamlessly with MCP
 
@@ -472,7 +409,7 @@ All existing Oracle security features work seamlessly with MCP
 
 ---
 
-## Slide 18: When to Use What?
+## Slide 15: When to Use What?
 
 ```mermaid
 flowchart TD
@@ -496,7 +433,7 @@ flowchart TD
 
 ---
 
-## Slide 19: Feature Comparison
+## Slide 16: Feature Comparison
 
 | Capability       | Select AI     | Select AI Agent | SQLcl MCP     | Autonomous MCP |
 | ---------------- | ------------- | --------------- | ------------- | -------------- |
@@ -511,7 +448,7 @@ flowchart TD
 
 ---
 
-## Slide 20: Layered Architecture
+## Slide 17: Layered Architecture
 
 ```mermaid
 flowchart TB
@@ -554,7 +491,7 @@ An enterprise might use ALL THREE:
 
 ---
 
-## Slide 21: Financial Services
+## Slide 18: Financial Services
 
 ```mermaid
 flowchart LR
@@ -583,7 +520,7 @@ flowchart LR
 
 ---
 
-## Slide 22: Healthcare & Life Sciences
+## Slide 19: Healthcare & Life Sciences
 
 ```mermaid
 flowchart LR
@@ -610,83 +547,11 @@ flowchart LR
 
 ---
 
-## Slide 23: Retail & E-Commerce
-
-| Use Case                 | Solution        | Business Value                           |
-| ------------------------ | --------------- | ---------------------------------------- |
-| **Inventory queries**    | Select AI       | Store managers ask "What's running low?" |
-| **Sales trend analysis** | SQLcl MCP       | Analysts use Claude to explore data      |
-| **Automated reordering** | Select AI Agent | Agent monitors stock, triggers orders    |
-| **Customer 360**         | Autonomous MCP  | Support uses AI with secure data access  |
-
-### Example Flow
-
-```
-Support Agent: "Show me customer John Smith's order history"
-Claude + MCP: [Connects securely, queries with VPD, redacts PII]
-              "Here are John's 15 orders this year..."
-```
-
----
-
-## Slide 24: Manufacturing & Supply Chain
-
-```mermaid
-flowchart TB
-    subgraph Sensors["IoT Data"]
-        S1["Production Lines"]
-        S2["Quality Sensors"]
-        S3["Logistics"]
-    end
-
-    subgraph Oracle["Oracle Database"]
-        Stream["Streaming Data"]
-        History["Historical Data"]
-        AI["AI Integration"]
-    end
-
-    subgraph Output["AI-Powered Insights"]
-        Predict["Predictive Maintenance"]
-        Quality["Quality Analysis"]
-        Optimize["Supply Optimization"]
-    end
-
-    Sensors --> Oracle
-    Oracle --> Output
-```
-
-| Use Case                   | Solution        | Example                                        |
-| -------------------------- | --------------- | ---------------------------------------------- |
-| **Maintenance prediction** | Select AI Agent | "Analyze machine X patterns, predict failures" |
-| **Quality investigation**  | SQLcl MCP       | Engineers query defect data with Claude        |
-| **Supply optimization**    | Select AI       | Dashboard queries in natural language          |
-
----
-
-## Slide 25: Public Sector
-
-| Use Case              | Solution        | Compliance                           |
-| --------------------- | --------------- | ------------------------------------ |
-| **Citizen queries**   | Select AI       | FOIA-compliant with redaction        |
-| **Budget analysis**   | SQLcl MCP       | Analysts explore spending patterns   |
-| **Case management**   | Select AI Agent | Automated case routing with approval |
-| **Cross-agency data** | Autonomous MCP  | Secure multi-tenant access           |
-
-### Security Highlight
-
-Oracle's MCP solutions are the ONLY ones with:
-
-- FedRAMP-ready infrastructure (ADB)
-- Complete audit trails for compliance
-- Fine-grained access control (VPD, Database Vault)
-
----
-
 # Part 7: Live Demo
 
 ---
 
-## Slide 26: Demo Architecture
+## Slide 20: Demo Architecture
 
 ```mermaid
 flowchart TB
@@ -727,7 +592,7 @@ flowchart TB
 
 ---
 
-## Slide 27: Demo - What We'll Show
+## Slide 21: Demo - What We'll Show
 
 ### Data Queries
 
@@ -753,7 +618,7 @@ flowchart TB
 
 ---
 
-## Slide 28: Demo - Behind the Scenes
+## Slide 22: Demo - Behind the Scenes
 
 ```mermaid
 sequenceDiagram
@@ -784,7 +649,7 @@ sequenceDiagram
 
 ---
 
-## Slide 29: Oracle Database MCP Evolution
+## Slide 23: Oracle Database MCP Evolution
 
 ```mermaid
 timeline
@@ -814,7 +679,7 @@ timeline
 
 ---
 
-## Slide 30: What's Coming
+## Slide 24: What's Coming
 
 | Feature                          | Status         | Impact                             |
 | -------------------------------- | -------------- | ---------------------------------- |
@@ -833,29 +698,7 @@ Red Hat OpenShift container: `quay.io/rh-ai-quickstart/oracle-sqlcl:0.5.11`
 
 ---
 
-## Slide 31: Market Comparison
-
-```mermaid
-quadrantChart
-    title Database MCP Servers: Enterprise vs. Setup
-    x-axis Easy Setup --> Complex Setup
-    y-axis Basic Security --> Enterprise Security
-
-    quadrant-1 Enterprise Ready
-    quadrant-2 Quick Start
-    quadrant-3 Limited Use
-    quadrant-4 Power User
-
-    PostgreSQL: [0.15, 0.20]
-    MongoDB: [0.25, 0.40]
-    Snowflake: [0.30, 0.60]
-    Oracle SQLcl: [0.55, 0.85]
-    Oracle Autonomous: [0.35, 0.95]
-```
-
----
-
-## Slide 32: Oracle's Competitive Advantages
+## Slide 25: Oracle's Competitive Advantages
 
 | Advantage                     | What It Means                                   |
 | ----------------------------- | ----------------------------------------------- |
@@ -876,7 +719,7 @@ quadrantChart
 
 ---
 
-## Slide 33: This Demo Was Built in 3 Days
+## Slide 26: This Demo Was Built in 3 Days
 
 ```mermaid
 flowchart LR
@@ -912,49 +755,7 @@ flowchart LR
 
 ---
 
-## Slide 34: Our Offer to You
-
-### Don't Go to Your Customer with Just a PowerPoint
-
-| Traditional Approach | Our Approach             |
-| -------------------- | ------------------------ |
-| Slides with promises | Live working demo        |
-| "Trust us"           | "Let us show you"        |
-| Weeks of preparation | Days with AI assistance  |
-| Generic examples     | Your customer's use case |
-
-### We Can Build Your Demo
-
-- Tell us your customer's industry
-- Tell us their use case
-- We'll build a working POC in days
-- You present with confidence
-
----
-
-## Slide 35: Next Steps
-
-### For Technical Teams
-
-1. Download SQLcl 25.2+
-2. Try with Oracle Database FREE (container)
-3. Experience the MCP integration firsthand
-
-### For Sales Teams
-
-1. Identify customer AI initiatives
-2. Map to Select AI / MCP use cases
-3. Request a custom demo build
-
-### Resources
-
-- [SQLcl MCP Documentation](https://docs.oracle.com/en/database/oracle/sql-developer-command-line/)
-- [Autonomous MCP Documentation](https://docs.oracle.com/en/cloud/paas/autonomous-database/)
-- This demo repository: `github.com/[your-repo]`
-
----
-
-## Slide 36: Summary
+## Slide 27: Summary
 
 ```mermaid
 flowchart TB
@@ -988,7 +789,7 @@ flowchart TB
 
 ---
 
-## Slide 37: Thank You
+## Slide 28: Thank You
 
 # Questions?
 
