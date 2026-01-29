@@ -101,23 +101,19 @@ cd ../..
 ./manage.py mcp setup
 ```
 
-## Demo with Claude Code
+## Demo
 
 Once setup is complete, you can use Claude Code to query the databases:
 
 **Data Queries:**
 
 - "Connect to hr_local and list all employees"
-- "Show employees by department with their managers"
-- "Describe the employees table structure"
-- "What's the salary distribution across departments?"
+- "Connect to hr_cloud and show employees by department with their managers"
 
 **Database Administration:**
 
 - "What is the character-set of the hr_local database?"
-- "Show the database version and instance name"
-- "Explain the execution plan for this query: SELECT \* FROM employees"
-- "What indexes exist on the employees table?"
+- "Show the database version and instance name of hr_local"
 
 ## Management Commands
 
