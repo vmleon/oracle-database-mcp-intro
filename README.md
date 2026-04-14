@@ -54,36 +54,41 @@ flowchart TB
 
 ## Quick Start - Local Database
 
+Create a virtual environment:
+
 ```bash
-# Create virtual environment
 python3 -m venv venv
+```
+
+Activate it:
+
+```bash
 source venv/bin/activate
 ```
 
+Install dependencies:
+
 ```bash
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-```bash
-# Set up local Oracle FREE container and deploy HR schema
-./manage.py local setup
-```
+Set up the local Oracle FREE container and deploy the HR schema:
 
 ```bash
-# Configure SQLcl saved connections for Claude Code MCP
-./manage.py mcp setup
+./manage.py local setup
 ```
 
 ## Quick Start - Cloud Database (Optional)
 
+Interactive OCI configuration:
+
 ```bash
-# Interactive OCI configuration
 ./manage.py cloud setup
 ```
 
+Deploy the infrastructure:
+
 ```bash
-# Deploy infrastructure
 cd deploy/terraform
 terraform init
 terraform plan -out=tfplan
@@ -91,15 +96,29 @@ terraform apply tfplan
 cd ../..
 ```
 
+Extract the wallet and deploy the schema:
+
 ```bash
-# Extract wallet and deploy schema
 ./manage.py cloud deploy
 ```
 
+## Configure MCP Connections
+
+Run this once the databases you want to use are ready. It creates SQLcl saved connections (`hr_local` and/or `hr_cloud`) for Claude Code MCP:
+
 ```bash
-# Update MCP connections
 ./manage.py mcp setup
 ```
+
+## HR Schema
+
+The demo includes a simplified HR schema:
+
+- **jobs**: Job definitions with salary ranges
+- **departments**: Department information
+- **employees**: Employee records with relationships
+
+Sample data includes 5 jobs, 5 departments, and 5 employees.
 
 ## Demo
 
@@ -117,69 +136,72 @@ Verify the MCP server is configured:
 
 You should see `sqlcl` listed as an active MCP server.
 
-**Data Queries:**
+The HR schema is seeded with ~500 employees spread across 5 departments and 5 jobs. A handful of rows and the table statistics are intentionally wrong — that is part of the demo.
+
+### Developer
 
 ```
-Connect to hr_local and list all employees
-```
-
-```
-Connect to hr_cloud and show employees by department with their managers
-```
-
-**Database Administration:**
-
-```
-What is the character-set of the hr_local database?
+Connect to hr_local. Explore the employees and jobs tables, then show me the average salary per department.
 ```
 
 ```
-Show the database version and instance name of hr_local
+Find any employees whose salary is below their job's defined minimum salary. Is this a real data-quality issue?
 ```
 
-## Management Commands
+### DBA / SRE
 
-```bash
-# Local database
-./manage.py local setup    # Start container + deploy schema
-./manage.py local clean    # Stop container, remove data
+```
+Connect to hr_local. Compare the real row count of the employees table with num_rows and last_analyzed in user_tables. Are the statistics current?
 ```
 
-```bash
-# Cloud database
-./manage.py cloud setup    # Interactive OCI config
-./manage.py cloud deploy   # Extract wallet + run Liquibase
-./manage.py cloud clean    # Remove generated files
+```
+Which indexes exist on the employees table, and which one would be used for a query filtering by department_id?
 ```
 
-```bash
-# MCP configuration
-./manage.py mcp setup      # Save SQLcl connections
+### Business Analyst
+
+```
+What is the salary distribution across departments, and who are the top 3 earners in each department?
 ```
 
-## HR Schema
+```
+Show me the hiring trends by year across the whole company.
+```
 
-The demo includes a simplified HR schema:
+### Audit Trail
 
-- **jobs**: Job definitions with salary ranges
-- **departments**: Department information
-- **employees**: Employee records with relationships
+Every query an LLM runs is traceable — a core enterprise story:
 
-Sample data includes 5 jobs, 5 departments, and 5 employees.
+```
+Show me every SQL statement Claude has executed in this database in the last few minutes. Query v$sql filtered by module.
+```
+
+### Cross-Database
+
+If you deployed the cloud database as well:
+
+```
+Compare the employees row count and the table structure between hr_local and hr_cloud.
+```
 
 ## Cleanup
 
+Local cleanup:
+
 ```bash
-# Local cleanup
 ./manage.py local clean
 ```
 
-```bash
-# Terraform destroy
-cd deploy/terraform && terraform destroy
-```
+Terraform destroy:
 
 ```bash
-# Cloud cleanup
+cd deploy/terraform
+terraform destroy
+cd ../..
+```
+
+Cloud cleanup:
+
+```bash
 ./manage.py cloud clean
 ```
