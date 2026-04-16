@@ -1,0 +1,75 @@
+databaseChangeLog:
+  - changeSet:
+      id: bulk-insert-employees
+      author: demo
+      comment: >
+        Inserts 500 additional employees (IDs 200-699) with deterministic
+        pseudo-random data spread across the existing 5 jobs and 5 departments,
+        with hire_dates from 2010 to early 2025. Statistics are intentionally
+        NOT re-gathered at the end: user_tables.num_rows stays at 5 while the
+        actual row count becomes ~505, so the DBA demo can discover stale
+        stats. Five rows (IDs 217, 283, 354, 491, 608) are planted with
+        salaries below their job's min_salary as a discoverable data-quality
+        bug. No constraint violation: the database accepts these rows.
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              DECLARE
+                TYPE t_vc  IS TABLE OF VARCHAR2(20);
+                TYPE t_job IS TABLE OF VARCHAR2(10);
+                TYPE t_num IS TABLE OF NUMBER;
+
+                first_names t_vc  := t_vc(
+                  'James','Mary','John','Patricia','Robert','Jennifer','Michael','Linda',
+                  'William','Elizabeth','David','Barbara','Richard','Susan','Joseph',
+                  'Jessica','Thomas','Sarah','Charles','Karen'
+                );
+                last_names  t_vc  := t_vc(
+                  'Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis',
+                  'Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson',
+                  'Anderson','Taylor','Moore','Jackson','Martin','Lee'
+                );
+                jobs_list   t_job := t_job('IT_PROG','SA_REP','SA_MAN','AD_VP','AD_PRES');
+                depts       t_num := t_num(10, 20, 30, 40, 50);
+                mgrs        t_num := t_num(100, 101, 103, 104);
+
+                v_fname  VARCHAR2(20);
+                v_lname  VARCHAR2(25);
+                v_email  VARCHAR2(25);
+                v_job    VARCHAR2(10);
+                v_dept   NUMBER;
+                v_mgr    NUMBER;
+                v_salary NUMBER;
+                v_min    NUMBER;
+                v_max    NUMBER;
+                v_hire   DATE;
+              BEGIN
+                FOR i IN 200..699 LOOP
+                  v_fname := first_names(MOD(i, 20) + 1);
+                  v_lname := last_names(MOD(i * 3, 20) + 1);
+                  v_job   := jobs_list(MOD(i * 2, 5) + 1);
+                  v_dept  := depts(MOD(i * 3, 5) + 1);
+                  v_mgr   := mgrs(MOD(i, 4) + 1);
+                  v_email := UPPER(SUBSTR(v_fname, 1, 1) || v_lname || i);
+                  v_hire  := DATE '2010-01-01' + MOD(i * 17, 5500);
+
+                  SELECT min_salary, max_salary INTO v_min, v_max
+                    FROM jobs WHERE job_id = v_job;
+
+                  v_salary := v_min + MOD(i * 13, (v_max - v_min + 1));
+
+                  IF i IN (217, 283, 354, 491, 608) THEN
+                    v_salary := GREATEST(v_min - MOD(i, 500) - 100, 1);
+                  END IF;
+
+                  INSERT INTO employees (
+                    employee_id, first_name, last_name, email, phone_number,
+                    hire_date, job_id, salary, commission_pct, manager_id, department_id
+                  ) VALUES (
+                    i, v_fname, v_lname, v_email, '555.000.' || LPAD(i, 4, '0'),
+                    v_hire, v_job, v_salary, NULL, v_mgr, v_dept
+                  );
+                END LOOP;
+                COMMIT;
+              END;

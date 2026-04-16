@@ -1,4 +1,13 @@
 databaseChangeLog:
   - include:
-      file: 001-hr-schema.yaml
+      file: 001-schema.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 002-reference-data.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 003-seed-employees.yaml
+      relativeToChangelogFile: true
+  - include:
+      file: 004-bulk-employees.yaml
       relativeToChangelogFile: true

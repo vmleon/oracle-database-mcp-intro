@@ -1,0 +1,90 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-initial-employees
+      author: demo
+      changes:
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 100}
+              - column: {name: first_name, value: "Steven"}
+              - column: {name: last_name, value: "King"}
+              - column: {name: email, value: "SKING"}
+              - column: {name: phone_number, value: "515.123.4567"}
+              - column: {name: hire_date, valueDate: "2003-06-17"}
+              - column: {name: job_id, value: "AD_PRES"}
+              - column: {name: salary, value: 24000}
+              - column: {name: commission_pct, value: null}
+              - column: {name: manager_id, value: null}
+              - column: {name: department_id, value: 10}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 101}
+              - column: {name: first_name, value: "Neena"}
+              - column: {name: last_name, value: "Kochhar"}
+              - column: {name: email, value: "NKOCHHAR"}
+              - column: {name: phone_number, value: "515.123.4568"}
+              - column: {name: hire_date, valueDate: "2005-09-21"}
+              - column: {name: job_id, value: "AD_VP"}
+              - column: {name: salary, value: 17000}
+              - column: {name: commission_pct, value: null}
+              - column: {name: manager_id, value: 100}
+              - column: {name: department_id, value: 10}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 103}
+              - column: {name: first_name, value: "Alexander"}
+              - column: {name: last_name, value: "Hunold"}
+              - column: {name: email, value: "AHUNOLD"}
+              - column: {name: phone_number, value: "590.423.4567"}
+              - column: {name: hire_date, valueDate: "2006-01-03"}
+              - column: {name: job_id, value: "IT_PROG"}
+              - column: {name: salary, value: 9000}
+              - column: {name: commission_pct, value: null}
+              - column: {name: manager_id, value: 101}
+              - column: {name: department_id, value: 20}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 104}
+              - column: {name: first_name, value: "John"}
+              - column: {name: last_name, value: "Russell"}
+              - column: {name: email, value: "JRUSSEL"}
+              - column: {name: phone_number, value: "011.44.1344.429268"}
+              - column: {name: hire_date, valueDate: "2004-10-01"}
+              - column: {name: job_id, value: "SA_MAN"}
+              - column: {name: salary, value: 14000}
+              - column: {name: commission_pct, valueNumeric: 0.40}
+              - column: {name: manager_id, value: 100}
+              - column: {name: department_id, value: 30}
+        - insert:
+            tableName: employees
+            columns:
+              - column: {name: employee_id, value: 105}
+              - column: {name: first_name, value: "Diana"}
+              - column: {name: last_name, value: "Lorentz"}
+              - column: {name: email, value: "DLORENTZ"}
+              - column: {name: phone_number, value: "590.423.5567"}
+              - column: {name: hire_date, valueDate: "2007-02-07"}
+              - column: {name: job_id, value: "SA_REP"}
+              - column: {name: salary, value: 8500}
+              - column: {name: commission_pct, valueNumeric: 0.25}
+              - column: {name: manager_id, value: 104}
+              - column: {name: department_id, value: 30}
+
+  - changeSet:
+      id: gather-initial-stats
+      author: demo
+      comment: >
+        Gather stats while employees table has only 5 rows. The next changeset
+        bulk-inserts ~500 more rows without re-gathering, leaving statistics
+        intentionally stale for the DBA demo.
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              BEGIN
+                DBMS_STATS.GATHER_TABLE_STATS(USER, 'EMPLOYEES');
+              END;

@@ -1,0 +1,80 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-jobs
+      author: demo
+      changes:
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "AD_PRES"}
+              - column: {name: job_title, value: "President"}
+              - column: {name: min_salary, value: 20000}
+              - column: {name: max_salary, value: 40000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "AD_VP"}
+              - column: {name: job_title, value: "Vice President"}
+              - column: {name: min_salary, value: 15000}
+              - column: {name: max_salary, value: 30000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "IT_PROG"}
+              - column: {name: job_title, value: "Programmer"}
+              - column: {name: min_salary, value: 4000}
+              - column: {name: max_salary, value: 10000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "SA_MAN"}
+              - column: {name: job_title, value: "Sales Manager"}
+              - column: {name: min_salary, value: 10000}
+              - column: {name: max_salary, value: 20000}
+        - insert:
+            tableName: jobs
+            columns:
+              - column: {name: job_id, value: "SA_REP"}
+              - column: {name: job_title, value: "Sales Representative"}
+              - column: {name: min_salary, value: 6000}
+              - column: {name: max_salary, value: 12000}
+
+  - changeSet:
+      id: insert-departments
+      author: demo
+      changes:
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 10}
+              - column: {name: department_name, value: "Executive"}
+              - column: {name: manager_id, value: 100}
+              - column: {name: location_id, value: 1700}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 20}
+              - column: {name: department_name, value: "IT"}
+              - column: {name: manager_id, value: 103}
+              - column: {name: location_id, value: 1400}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 30}
+              - column: {name: department_name, value: "Sales"}
+              - column: {name: manager_id, value: 104}
+              - column: {name: location_id, value: 2500}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 40}
+              - column: {name: department_name, value: "Marketing"}
+              - column: {name: manager_id, value: null}
+              - column: {name: location_id, value: 2400}
+        - insert:
+            tableName: departments
+            columns:
+              - column: {name: department_id, value: 50}
+              - column: {name: department_name, value: "Finance"}
+              - column: {name: manager_id, value: null}
+              - column: {name: location_id, value: 1700}
